@@ -8,9 +8,56 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var redSliderValue: Double = 53
+    @State private var greenSliderValue: Double = 152
+    @State private var blueSliderValue: Double = 202
+    
     var body: some View {
-        Text("Hello, world!")
+        ZStack {
+            Color.gray
+                .ignoresSafeArea()
+            
+            VStack(spacing: 60) {
+                ColorView(
+                    redValue: redSliderValue/255,
+                    greenValue: greenSliderValue/255,
+                    blueValue: blueSliderValue/255
+                )
+                    .cornerRadius(25)
+                    .overlay(RoundedRectangle(cornerRadius: 25).stroke(Color.white, lineWidth: 3))
+                    .frame(height: 300)
+                    .shadow(color: .yellow, radius: 7, x: 1, y: 1)
+                
+                VStack(spacing: 30) {
+                    CustomSlider(
+                        value: $redSliderValue,
+                        sliderColor: .red
+                    )
+                    CustomSlider(
+                        value: $greenSliderValue,
+                        sliderColor: .green
+                    )
+                    CustomSlider(
+                        value: $blueSliderValue,
+                        sliderColor: .blue
+                    )
+                }
+                
+                Spacer()
+                
+            }
+            .toolbar(content: {
+                ToolbarItem(placement: .keyboard) {
+                    Button("Done") {
+                        hideKeyboard()
+                    }
+                }
+            })
             .padding()
+            .onTapGesture {
+                hideKeyboard()
+            }
+        }
     }
 }
 
@@ -19,3 +66,44 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
     }
 }
+
+struct ColorView: View {
+    let redValue: Double
+    let greenValue: Double
+    let blueValue: Double
+    
+    var body: some View {
+        Color(red: redValue, green: greenValue, blue: blueValue)
+    }
+}
+
+struct CustomSlider: View {
+    @Binding var value: Double
+    
+    let sliderColor: Color
+    
+    var body: some View {
+        
+        HStack {
+            Text("\(lround(value))").frame(width: 32)
+            
+            Slider(value: $value, in: 0...255, step: 1)
+                .tint(sliderColor)
+            
+            TextField("", value: $value, format:.number)
+                .textFieldStyle(.roundedBorder)
+                .frame(width: 45)
+                .keyboardType(.decimalPad)
+        }
+    }
+}
+
+// MARK: - Найдено в интернете)
+//я даже не смогу объяснить, что здесь происходит кто, куда, кого и зачем, разве только, что через синглтон сбрасываются на nil все значения :)
+#if canImport(UIKit)
+extension ContentView {
+    private func hideKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+    }
+}
+#endif

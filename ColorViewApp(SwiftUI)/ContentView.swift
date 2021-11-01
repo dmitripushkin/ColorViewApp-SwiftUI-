@@ -31,15 +31,18 @@ struct ContentView: View {
                 VStack(spacing: 30) {
                     CustomSlider(
                         value: $redSliderValue,
-                        sliderColor: .red
+                        sliderColor: .red,
+                        textLabelColor: .red
                     )
                     CustomSlider(
                         value: $greenSliderValue,
-                        sliderColor: .green
+                        sliderColor: .green,
+                        textLabelColor: .green
                     )
                     CustomSlider(
                         value: $blueSliderValue,
-                        sliderColor: .blue
+                        sliderColor: .blue,
+                        textLabelColor: .blue
                     )
                 }
                 
@@ -64,6 +67,7 @@ struct ContentView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
+.previewInterfaceOrientation(.portraitUpsideDown)
     }
 }
 
@@ -81,11 +85,13 @@ struct CustomSlider: View {
     @Binding var value: Double
     
     let sliderColor: Color
+    let textLabelColor: Color
     
     var body: some View {
         
         HStack {
             Text("\(lround(value))").frame(width: 32)
+                .foregroundColor(textLabelColor)
             
             Slider(value: $value, in: 0...255, step: 1)
                 .tint(sliderColor)
